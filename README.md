@@ -4,7 +4,7 @@ A client-side movie discovery application that uses TMDB API for movie data and 
 
 ## Live Demo
 
-Visit the live app: [Your GitHub Pages URL will be here]
+Visit the live app: [https://aylward-99.github.io/movie-discovery-app]
 
 ## Features
 
@@ -25,16 +25,10 @@ Visit the live app: [Your GitHub Pages URL will be here]
 ## API Keys
 
 ### TMDB API Key (Required)
-1. Go to https://www.themoviedb.org/settings/api
-2. Create a free account
-3. Request an API key
-4. Copy the API key and paste it in the app
+643e149f416d34e4c7ade284fb20ba23
 
 ### OpenAI API Key (Optional)
-1. Go to https://platform.openai.com/api-keys
-2. Create an account or log in
-3. Generate a new API key
-4. Copy the key and paste it in the app for AI features
+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
 
 ## Technologies Used
 
