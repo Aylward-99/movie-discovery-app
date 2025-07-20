@@ -126,17 +126,19 @@
 
         <main class="container mx-auto p-6">
             <!-- API Key Setup -->
-            <div id="api-setup" class="bg-red-900 border border-red-600 rounded-lg p-4 mb-6">
-                <h2 class="text-lg font-semibold mb-2">API Setup Required</h2>
-                <p class="mb-4">To use this app, you need TMDB API key. OpenAI is optional for AI features.</p>
+            <div id="api-setup" class="bg-blue-900 border border-blue-600 rounded-lg p-4 mb-6">
+                <h2 class="text-lg font-semibold mb-2">API Keys Pre-Configured!</h2>
+                <p class="mb-4">Both TMDB and OpenAI are configured. Ready to explore movies and chat with AI!</p>
                 <div class="space-y-2">
-                    <input type="text" id="tmdb-key" placeholder="Enter TMDB API Key" 
-                           class="w-full p-2 bg-gray-800 border border-gray-600 rounded">
-                    <input type="text" id="openai-key" placeholder="Enter OpenAI API Key (optional)" 
-                           class="w-full p-2 bg-gray-800 border border-gray-600 rounded">
-                    <button onclick="saveApiKeys()" 
-                            class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">
-                        Save API Keys
+                    <input type="text" id="tmdb-key" placeholder="TMDB API Key (configured)" 
+                           value="643e149f416d34e4c7ade284fb20ba23"
+                           class="w-full p-2 bg-gray-700 border border-gray-600 rounded" readonly>
+                    <input type="text" id="openai-key" placeholder="OpenAI API Key (configured)" 
+                           value="sk-***configured***"
+                           class="w-full p-2 bg-gray-700 border border-gray-600 rounded" readonly>
+                    <button onclick="startApp()" 
+                            class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg text-lg font-semibold">
+                        🚀 Start Exploring Movies
                     </button>
                 </div>
             </div>
@@ -237,32 +239,91 @@
                 </div>
             </section>
         </main>
+
+        <!-- Movie Player Modal -->
+        <div id="movie-player-modal" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-gray-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center p-6 border-b border-gray-700">
+                    <h2 id="modal-movie-title" class="text-2xl font-bold text-white"></h2>
+                    <button onclick="closeMoviePlayer()" class="text-gray-400 hover:text-white text-2xl">×</button>
+                </div>
+                
+                <div class="p-6">
+                    <!-- Trailer Section -->
+                    <div id="trailer-section" class="mb-6">
+                        <h3 class="text-lg font-semibold text-white mb-4">Watch Trailer</h3>
+                        <div id="trailer-container" class="aspect-video bg-gray-800 rounded-lg flex items-center justify-center">
+                            <div class="text-gray-400">Loading trailer...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Movie Details -->
+                    <div id="movie-details" class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <img id="modal-movie-poster" src="" alt="" class="w-full rounded-lg">
+                        </div>
+                        <div class="text-white">
+                            <div id="modal-movie-info">
+                                <!-- Movie info will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Streaming Options -->
+                    <div id="streaming-section">
+                        <h3 class="text-lg font-semibold text-white mb-4">Where to Watch</h3>
+                        <div id="streaming-options" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <!-- Streaming options will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        let tmdbApiKey = localStorage.getItem('tmdb_api_key') || '';
-        let openaiApiKey = localStorage.getItem('openai_api_key') || '';
+        let tmdbApiKey = localStorage.getItem('tmdb_api_key') || '643e149f416d34e4c7ade284fb20ba23';
+        let openaiApiKey = localStorage.getItem('openai_api_key') || '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';
 
         // Check if API keys are saved
         if (tmdbApiKey) {
             document.getElementById('api-setup').style.display = 'none';
+            // Save the pre-configured keys
+            localStorage.setItem('tmdb_api_key', tmdbApiKey);
+            if (openaiApiKey) {
+                localStorage.setItem('openai_api_key', openaiApiKey);
+            }
             loadTrendingMovies();
         }
 
         function saveApiKeys() {
-            tmdbApiKey = document.getElementById('tmdb-key').value;
+            // TMDB key is already configured
+            tmdbApiKey = '643e149f416d34e4c7ade284fb20ba23';
             openaiApiKey = document.getElementById('openai-key').value;
             
-            if (tmdbApiKey) {
-                localStorage.setItem('tmdb_api_key', tmdbApiKey);
-                if (openaiApiKey) {
-                    localStorage.setItem('openai_api_key', openaiApiKey);
-                }
-                document.getElementById('api-setup').style.display = 'none';
-                loadTrendingMovies();
+            localStorage.setItem('tmdb_api_key', tmdbApiKey);
+            if (openaiApiKey) {
+                localStorage.setItem('openai_api_key', openaiApiKey);
+                showNotification('OpenAI API key saved! AI chat is now available.', '🤖');
             } else {
-                alert('TMDB API key is required!');
+                showNotification('TMDB configured! Movies are ready to explore.', '🎬');
             }
+            
+            document.getElementById('api-setup').style.display = 'none';
+            loadTrendingMovies();
+        }
+        
+        function startApp() {
+            // Both APIs are pre-configured
+            tmdbApiKey = '643e149f416d34e4c7ade284fb20ba23';
+            openaiApiKey = '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';
+            
+            localStorage.setItem('tmdb_api_key', tmdbApiKey);
+            localStorage.setItem('openai_api_key', openaiApiKey);
+            
+            document.getElementById('api-setup').style.display = 'none';
+            loadTrendingMovies();
+            showNotification('Welcome to CineAI! All features are ready to use.', '🎬');
         }
 
         function showSection(section) {
@@ -542,16 +603,25 @@
             const favorites = db.getFavorites().map(f => f.movieId);
             
             container.innerHTML = movies.map(movie => `
-                <div class="movie-card bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300 group">
+                <div class="movie-card bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300 group cursor-pointer" onclick="openMoviePlayer(${movie.id})">
                     <div class="relative">
                         <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" 
                              alt="${movie.title}" 
                              class="w-full h-64 object-cover">
                         <div class="absolute top-2 right-2">
-                            <button onclick="toggleFavorite(${movie.id}, '${movie.title.replace(/'/g, "\\'")}', '${movie.poster_path}', ${movie.vote_average})" 
+                            <button onclick="event.stopPropagation(); toggleFavorite(${movie.id}, '${movie.title.replace(/'/g, "\\'")}', '${movie.poster_path}', ${movie.vote_average})" 
                                     class="favorite-btn ${favorites.includes(movie.id) ? 'favorited' : ''} bg-black bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 transition-all">
                                 <span class="text-red-500 text-xl">${favorites.includes(movie.id) ? '❤️' : '🤍'}</span>
                             </button>
+                        </div>
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center transition-all duration-300">
+                            <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div class="bg-white bg-opacity-90 rounded-full p-4">
+                                    <svg class="w-8 h-8 text-gray-900" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M8 5v10l8-5-8-5z"/>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
                         <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
                             <div class="flex items-center justify-between">
@@ -599,10 +669,129 @@
             }
         }
         
+        // Movie player functions
+        async function openMoviePlayer(movieId) {
+            const modal = document.getElementById('movie-player-modal');
+            modal.classList.remove('hidden');
+            
+            try {
+                // Fetch movie details
+                const movieResponse = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${tmdbApiKey}&append_to_response=videos,watch/providers`);
+                const movie = await movieResponse.json();
+                
+                // Update modal with movie info
+                document.getElementById('modal-movie-title').textContent = movie.title;
+                document.getElementById('modal-movie-poster').src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+                document.getElementById('modal-movie-poster').alt = movie.title;
+                
+                // Display movie details
+                document.getElementById('modal-movie-info').innerHTML = `
+                    <h3 class="text-xl font-bold mb-3">${movie.title} (${new Date(movie.release_date).getFullYear()})</h3>
+                    <div class="mb-4">
+                        <span class="bg-blue-600 text-white px-2 py-1 rounded text-sm mr-2">⭐ ${movie.vote_average.toFixed(1)}</span>
+                        <span class="text-gray-400">${movie.runtime} min</span>
+                    </div>
+                    <div class="mb-4">
+                        <strong>Genres:</strong> ${movie.genres.map(g => g.name).join(', ')}
+                    </div>
+                    <div class="mb-4">
+                        <strong>Overview:</strong><br>
+                        <p class="mt-2 text-gray-300">${movie.overview}</p>
+                    </div>
+                    <div class="mb-4">
+                        <strong>Cast:</strong><br>
+                        <span class="text-gray-300">Loading cast...</span>
+                    </div>
+                `;
+                
+                // Load trailer
+                const trailer = movie.videos.results.find(video => 
+                    video.type === 'Trailer' && video.site === 'YouTube'
+                );
+                
+                if (trailer) {
+                    document.getElementById('trailer-container').innerHTML = `
+                        <iframe 
+                            width="100%" 
+                            height="100%" 
+                            src="https://www.youtube.com/embed/${trailer.key}" 
+                            frameborder="0" 
+                            allowfullscreen
+                            class="rounded-lg">
+                        </iframe>
+                    `;
+                } else {
+                    document.getElementById('trailer-container').innerHTML = `
+                        <div class="text-gray-400 text-center">
+                            <div class="text-4xl mb-2">🎬</div>
+                            <p>No trailer available</p>
+                        </div>
+                    `;
+                }
+                
+                // Load streaming options
+                loadStreamingOptions(movie);
+                
+                // Load cast
+                loadMovieCast(movieId);
+                
+            } catch (error) {
+                console.error('Error loading movie details:', error);
+                showNotification('Error loading movie details', '❌');
+            }
+        }
+        
+        async function loadStreamingOptions(movie) {
+            const streamingContainer = document.getElementById('streaming-options');
+            
+            // Popular streaming services with direct links
+            const streamingServices = [
+                { name: 'Netflix', url: `https://www.netflix.com/search?q=${encodeURIComponent(movie.title)}`, color: 'bg-red-600', icon: '🎬' },
+                { name: 'Amazon Prime', url: `https://www.amazon.com/s?k=${encodeURIComponent(movie.title)}&i=instant-video`, color: 'bg-blue-600', icon: '📺' },
+                { name: 'Disney+', url: `https://www.disneyplus.com/search?q=${encodeURIComponent(movie.title)}`, color: 'bg-blue-500', icon: '🏰' },
+                { name: 'Hulu', url: `https://www.hulu.com/search?q=${encodeURIComponent(movie.title)}`, color: 'bg-green-500', icon: '📱' },
+                { name: 'Apple TV+', url: `https://tv.apple.com/search?term=${encodeURIComponent(movie.title)}`, color: 'bg-gray-800', icon: '🍎' },
+                { name: 'YouTube Movies', url: `https://www.youtube.com/results?search_query=${encodeURIComponent(movie.title)}+full+movie`, color: 'bg-red-500', icon: '▶️' }
+            ];
+            
+            streamingContainer.innerHTML = streamingServices.map(service => `
+                <a href="${service.url}" target="_blank" 
+                   class="${service.color} text-white p-4 rounded-lg hover:opacity-80 transition-opacity flex flex-col items-center text-center">
+                    <div class="text-2xl mb-2">${service.icon}</div>
+                    <div class="font-semibold">${service.name}</div>
+                </a>
+            `).join('');
+        }
+        
+        async function loadMovieCast(movieId) {
+            try {
+                const castResponse = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${tmdbApiKey}`);
+                const castData = await castResponse.json();
+                
+                const topCast = castData.cast.slice(0, 5);
+                const castHtml = topCast.map(actor => actor.name).join(', ');
+                
+                // Update cast info
+                const movieInfo = document.getElementById('modal-movie-info');
+                movieInfo.innerHTML = movieInfo.innerHTML.replace(
+                    '<span class="text-gray-300">Loading cast...</span>',
+                    `<span class="text-gray-300">${castHtml}</span>`
+                );
+            } catch (error) {
+                console.error('Error loading cast:', error);
+            }
+        }
+        
+        function closeMoviePlayer() {
+            document.getElementById('movie-player-modal').classList.add('hidden');
+            // Stop any playing trailers
+            document.getElementById('trailer-container').innerHTML = '<div class="text-gray-400">Loading trailer...</div>';
+        }
+
         // Show user's favorites
         function showFavorites() {
             const favorites = db.getFavorites();
-            const container = document.getElementById('search-results');
+            const container = document.getElementById('favorites-list');
             
             if (favorites.length === 0) {
                 container.innerHTML = `
@@ -616,16 +805,25 @@
             }
             
             container.innerHTML = favorites.map(fav => `
-                <div class="movie-card bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300">
+                <div class="movie-card bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300 cursor-pointer" onclick="openMoviePlayer(${fav.movieId})">
                     <div class="relative">
                         <img src="https://image.tmdb.org/t/p/w500${fav.movieData.posterPath}" 
                              alt="${fav.movieData.title}" 
                              class="w-full h-64 object-cover">
                         <div class="absolute top-2 right-2">
-                            <button onclick="toggleFavorite(${fav.movieId}, '${fav.movieData.title.replace(/'/g, "\\'")}', '${fav.movieData.posterPath}', ${fav.movieData.rating})" 
+                            <button onclick="event.stopPropagation(); toggleFavorite(${fav.movieId}, '${fav.movieData.title.replace(/'/g, "\\'")}', '${fav.movieData.posterPath}', ${fav.movieData.rating})" 
                                     class="favorite-btn favorited bg-black bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 transition-all">
                                 <span class="text-red-500 text-xl">❤️</span>
                             </button>
+                        </div>
+                        <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 flex items-center justify-center transition-all duration-300">
+                            <div class="opacity-0 hover:opacity-100 transition-opacity duration-300">
+                                <div class="bg-white bg-opacity-90 rounded-full p-4">
+                                    <svg class="w-8 h-8 text-gray-900" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M8 5v10l8-5-8-5z"/>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
                         <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
                             <div class="flex items-center justify-between">
